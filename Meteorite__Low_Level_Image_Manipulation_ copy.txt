@@ -10,14 +10,25 @@ class Meteorite extends Entity {
   void hitEffect() { 
     sprite.loadPixels(); // Access pixel buffer
     
-    // Iterate through raw pixel array to perform channel-wise color manipulation
     for (int i = 0; i < sprite.pixels.length; i++) {
-      float r = red(sprite.pixels[i]);
-      float g = green(sprite.pixels[i]);
-      float b = blue(sprite.pixels[i]);
+      int p = sprite.pixels[i];
       
-      // Shift colors toward red to visualize visual damage
-      sprite.pixels[i] = color(r + 50, g * 0.8, b * 0.8);
+      // Extract ARGB channels using bit shifts and bitwise AND
+      int a = (p >> 24) & 0xFF;
+      int r = (p >> 16) & 0xFF;
+      int g = (p >> 8)  & 0xFF;
+      int b = p         & 0xFF;
+      
+      // Skip transparent pixels so PNG transparency remains intact
+      if (a > 0) {
+        // Shift toward red and constrain channel values between 0 and 255
+        r = min(255, r + 50);
+        g = (int)(g * 0.8);
+        b = (int)(b * 0.8);
+        
+        // Reconstruct the 32-bit ARGB pixel using bitwise OR and left shifts
+        sprite.pixels[i] = (a << 24) | (r << 16) | (g << 8) | b;
+      }
     }
     
     sprite.updatePixels(); // Commit pixel changes back to image buffer

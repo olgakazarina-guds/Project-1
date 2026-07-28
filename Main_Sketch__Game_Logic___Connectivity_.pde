@@ -1,15 +1,18 @@
-// PIXEL DEFENDER: Final Version // Team Name: Digitalis 
+// PIXEL DEFENDER: Final Version 
+// Team Name: Digitalis 
 // Topics: 2D Transformations, Array Slot Reuse, Low-Level Image Manipulation
 
 Spaceship ship; 
 Meteorite meteor;
 
-// Fixed array size to 10 for robust Array Slot Reuse demonstration
+// Fixed array size to 10 for Array Slot Reuse demonstration
 Laser[] lasers = new Laser[10]; 
 PImage meteorImg;
 
 void setup() { 
   size(600, 400); // Rule: size() must be the first line
+  
+  // Note: Place "meteor.png" inside the "data" subfolder of your sketch directory
   meteorImg = loadImage("meteor.png"); 
   ship = new Spaceship(); 
   meteor = new Meteorite(100, 100, meteorImg);
@@ -20,7 +23,7 @@ void setup() {
 }
 
 void draw() { 
-  background(51); // Rule: Redraw background to prevent "smearing"
+  background(51); // Redraw background to prevent "smearing"
 
   ship.update(); 
   ship.display(); 
@@ -33,7 +36,7 @@ void draw() {
       
       // Collision detection logic
       float d = dist(lasers[i].x, lasers[i].y, meteor.x, meteor.y);
-      if (d < meteor.w/2) {
+      if (d < meteor.w / 2) {
         meteor.hitEffect();       // Triggers pixel manipulation
         lasers[i].active = false; // Recycle the laser slot
       }

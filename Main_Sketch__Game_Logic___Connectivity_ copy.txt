@@ -1,15 +1,14 @@
-// PIXEL DEFENDER: Final Version // Team Name: Digitalis
+// PIXEL DEFENDER: Final Version // Team Name: Digitalis 
 // Topics: 2D Transformations, Array Slot Reuse, Low-Level Image Manipulation
 
-Spaceship ship;
+Spaceship ship; 
 Meteorite meteor;
 
-// FIX: Initialized array size to 10 to match design specification for Array Slot Reuse
+// Fixed array size to 10 for robust Array Slot Reuse demonstration
 Laser[] lasers = new Laser[10]; 
-
 PImage meteorImg;
 
-void setup() {
+void setup() { 
   size(600, 400); // Rule: size() must be the first line
   meteorImg = loadImage("meteor.png"); 
   ship = new Spaceship(); 
@@ -20,8 +19,8 @@ void setup() {
   } 
 }
 
-void draw() {
-  background(51); // Prevent "smearing"
+void draw() { 
+  background(51); // Rule: Redraw background to prevent "smearing"
 
   ship.update(); 
   ship.display(); 
@@ -32,18 +31,17 @@ void draw() {
       lasers[i].update(); 
       lasers[i].display();
       
-      // Collision detection between active lasers and the meteorite target
+      // Collision detection logic
       float d = dist(lasers[i].x, lasers[i].y, meteor.x, meteor.y);
-      if (d < meteor.w / 2) {
-        meteor.hitEffect();       // Trigger pixel-level modification
-        lasers[i].active = false; // Deactivate laser to immediately recycle the slot
+      if (d < meteor.w/2) {
+        meteor.hitEffect();       // Triggers pixel manipulation
+        lasers[i].active = false; // Recycle the laser slot
       }
     } 
   } 
 }
 
 void mousePressed() { 
-  // Find the first inactive laser slot in the array and recycle it
   for (int i = 0; i < lasers.length; i++) { 
     if (!lasers[i].active) { 
       lasers[i].spawn(ship.x, ship.y, ship.angle); 
