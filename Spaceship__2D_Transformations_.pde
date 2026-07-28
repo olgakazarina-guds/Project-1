@@ -1,23 +1,22 @@
 class Spaceship extends Entity {
-  float angle;
 
   Spaceship() { 
-    super(300, 200, 30, 30); 
+    super(300, 340, 40, 30); 
   }
 
   void update() {
-    // Points ship toward mouse using radians
-    angle = atan2(mouseY - y, mouseX - x);
+    // Keep ship anchored near the bottom base
+    x = constrain(mouseX, 40, width - 40);
   }
 
   void display() {
-    pushMatrix();      // Isolate coordinate system
-    translate(x, y);   // Translate to ship center before rotating
-    rotate(angle);     // Rotate around ship center
+    pushMatrix();
+    translate(x, y);
     
-    fill(0, 255, 0);
-    triangle(w, 0, -w/2, -h/2, -w/2, h/2); // Render ship geometry
+    // Render Hull
+    fill(0, 200, 255);
+    triangle(0, -h/2, -w/2, h/2, w/2, h/2);
     
-    popMatrix();       // Restore global coordinate system
+    popMatrix();
   }
 }
