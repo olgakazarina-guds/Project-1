@@ -1,50 +1,61 @@
-// Main Sketch: Game Logic & Connectivity
+// PIXEL DEFENDER: Final Version
+// Team Name: Digitalis
+// Topics: 2D Transformations, Array Slot Reuse, Low-Level Image Manipulation
+
 Spaceship ship;
 Meteorite meteor;
-Laser[] lasers = new Laser[3]; // Capacity for 9 simultaneous shots
+// FIX POINT: Increased array size to 9 for better gameplay
+Laser[] lasers = new Laser[3]; 
 PImage meteorImg;
 
 void setup() {
-  size(600, 400); // Rule: Must be the first line
-  meteorImg = loadImage("meteor.png"); // Place in /data folder
+  // Rule: size() must be the very first line of setup()
+  size(600, 400); 
+  
+  // Rule: Assets must be located in a folder named /data inside the sketch folder
+  meteorImg = loadImage("meteor.png"); 
   
   ship = new Spaceship();
   meteor = new Meteorite(100, 100, meteorImg);
   
-  // Initialize the array pool to prevent NullPointerExceptions
+  // Pro-Tip: Initialize the array pool with objects to prevent NullPointerExceptions
   for (int i = 0; i < lasers.length; i++) {
     lasers[i] = new Laser();
   }
 }
 
 void draw() {
-  background(51); // Prevent "smearing" by wiping the slate
+  // Rule: Redraw background every frame to prevent "smearing"
+  background(51); 
   
   ship.update();
   ship.display();
   meteor.display();
   
+  // Pro-Tip: Always check if an object is 'active' before processing it
   for (int i = 0; i < lasers.length; i++) {
     if (lasers[i].active) {
       lasers[i].update();
       lasers[i].display();
       
-      // THE FUNCTIONAL LINK: Collision Detection
+      // FIX POINT: The Functional Link (Collision Detection)
+      // Check the distance between laser and meteorite center
       float d = dist(lasers[i].x, lasers[i].y, meteor.x, meteor.y);
-      if (d < 30) { // Check distance against meteorite radius
+      if (d < 30) { 
         meteor.hitEffect(); // Trigger the manual bit-shifting flash
-        lasers[i].active = false; // Deactivate laser for recycling
+        lasers[i].active = false; // "Recycle" the laser slot for reuse
       }
     }
   }
 }
 
+// User Interaction: Search-and-Fill Array Recycling
 void mousePressed() {
-  // Array Slot Reuse: Search for an inactive laser slot
   for (int i = 0; i < lasers.length; i++) {
+    // If a slot is inactive, reuse it for a new shot
     if (!lasers[i].active) {
       lasers[i].spawn(ship.x, ship.y, ship.angle);
-      break; 
+      break; // Rule: Exit the loop after finding ONE available slot
     }
   }
 }
