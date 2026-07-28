@@ -6,19 +6,18 @@ class Spaceship extends Entity {
   }
 
   void update() {
-    // Calculates angle toward mouse. Radians are used for rotation
+    // Points ship toward mouse using radians [6]
     angle = atan2(mouseY - y, mouseX - x);
   }
 
   void display() {
-    // Rule: Use pushMatrix/popMatrix to isolate this object's movement
-    pushMatrix();      
-    // Rule: Order counts! translate() to the center BEFORE rotation
-    translate(x, y);   
-    rotate(angle);     
+    pushMatrix();      // Rule: Isolate this object's coordinate system [4]
+    translate(x, y);   // Rule: translate() to center BEFORE rotating [5]
+    rotate(angle);     // Rotate around ship center
     
     fill(0, 255, 0);
     triangle(w, 0, -w/2, -h/2, -w/2, h/2); 
-    popMatrix();       
+    
+    popMatrix();       // FIX: Restore the global coordinate system [4]
   }
 }
