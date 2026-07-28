@@ -16,7 +16,7 @@ class Spaceship extends Entity {
     rotate(angle);     // Rotate around ship center
     
     fill(0, 255, 0);
-    triangle(w, 0, -w/2, -h/2, -w/2, h/2); // Render ship geometry
+    triangle(w, 0, -w/2, -h/2, -w/2, h/2); 
     
     popMatrix();       // Restore global coordinate system
   }

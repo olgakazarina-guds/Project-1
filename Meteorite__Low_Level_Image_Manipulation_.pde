@@ -3,32 +3,38 @@ class Meteorite extends Entity {
 
   Meteorite(float x, float y, PImage img) { 
     super(x, y, 60, 60); 
-    // Pro-Tip: Create a working copy to avoid modifying the global asset [4]
+    // Create an independent copy to avoid mutating the global loaded asset
     this.sprite = img.get(); 
   }
 
-  // FIX: Completed the low-level manipulation loop to satisfy project requirements [4]
   void hitEffect() { 
-    // Pro-Tip: Access object buffer (sprite.pixels), not the main window buffer! [4]
-    sprite.loadPixels(); 
+    sprite.loadPixels(); // Access pixel buffer
     
-    // Iterate through the pixels array to apply a visual "damage" effect
     for (int i = 0; i < sprite.pixels.length; i++) {
-      // Extract color components from the current pixel
-      float r = red(sprite.pixels[i]);
-      float g = green(sprite.pixels[i]);
-      float b = blue(sprite.pixels[i]);
+      int p = sprite.pixels[i];
       
-      // Manipulation logic: Shift colors toward red and reduce brightness
-      sprite.pixels[i] = color(r + 50, g * 0.8, b * 0.8);
+      // Extract ARGB channels using bit shifts and bitwise AND
+      int a = (p >> 24) & 0xFF;
+      int r = (p >> 16) & 0xFF;
+      int g = (p >> 8)  & 0xFF;
+      int b = p         & 0xFF;
+      
+      // Skip transparent pixels so PNG transparency remains intact
+      if (a > 0) {
+        // Shift toward red and constrain channel values between 0 and 255
+        r = min(255, r + 50);
+        g = (int)(g * 0.8);
+        b = (int)(b * 0.8);
+        
+        // Reconstruct the 32-bit ARGB pixel using bitwise OR and left shifts
+        sprite.pixels[i] = (a << 24) | (r << 16) | (g << 8) | b;
+      }
     }
     
-    // Commit the changes from the pixel array back to the PImage [4]
-    sprite.updatePixels(); 
+    sprite.updatePixels(); // Commit pixel changes back to image buffer
   }
 
   void display() { 
-    // Draw the meteorite sprite centered on its coordinates [4]
     image(sprite, x - w/2, y - h/2, w, h); 
   } 
 }

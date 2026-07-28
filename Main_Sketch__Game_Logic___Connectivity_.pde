@@ -1,47 +1,47 @@
-// PIXEL DEFENDER: Final Version // Team Name: Digitalis
+// PIXEL DEFENDER: Final Version // Team Name: Digitalis 
 // Topics: 2D Transformations, Array Slot Reuse, Low-Level Image Manipulation
 
 Spaceship ship; 
-Meteorite meteor; 
+Meteorite meteor;
 
-// FIX: Increased array size from 1 to 10 to demonstrate "Array Slot Reuse" logic [1]
-Laser[] lasers = new Laser[3]; 
-
+// Fixed array size to 10 for robust Array Slot Reuse demonstration
+Laser[] lasers = new Laser[10]; 
 PImage meteorImg;
 
 void setup() { 
-  size(600, 400); // Rule: size() must be the first line [1]
-  
-  // Assets must be in /data folder [1]
+  size(600, 400); // Rule: size() must be the first line
   meteorImg = loadImage("meteor.png"); 
-  
   ship = new Spaceship(); 
   meteor = new Meteorite(100, 100, meteorImg);
 
-  // Pro-Tip: Initialize the array pool to prevent NullPointerExceptions [1]
   for (int i = 0; i < lasers.length; i++) { 
     lasers[i] = new Laser(); 
   } 
 }
 
 void draw() { 
-  background(51); // Rule: Redraw background to prevent "smearing" [2]
+  background(51); // Rule: Redraw background to prevent "smearing"
 
   ship.update(); 
   ship.display(); 
   meteor.display();
 
-  // Update and display only active projectiles [2]
   for (int i = 0; i < lasers.length; i++) { 
     if (lasers[i].active) { 
       lasers[i].update(); 
       lasers[i].display();
+      
+      // Collision detection logic
+      float d = dist(lasers[i].x, lasers[i].y, meteor.x, meteor.y);
+      if (d < meteor.w/2) {
+        meteor.hitEffect();       // Triggers pixel manipulation
+        lasers[i].active = false; // Recycle the laser slot
+      }
     } 
   } 
 }
 
 void mousePressed() { 
-  // Search-and-Fill logic for "Infinite Ammo" - find first inactive slot [2]
   for (int i = 0; i < lasers.length; i++) { 
     if (!lasers[i].active) { 
       lasers[i].spawn(ship.x, ship.y, ship.angle); 

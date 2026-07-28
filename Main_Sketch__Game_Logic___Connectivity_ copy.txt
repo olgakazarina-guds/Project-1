@@ -1,47 +1,49 @@
 // PIXEL DEFENDER: Final Version // Team Name: Digitalis
 // Topics: 2D Transformations, Array Slot Reuse, Low-Level Image Manipulation
 
-Spaceship ship; 
-Meteorite meteor; 
+Spaceship ship;
+Meteorite meteor;
 
-// FIX: Increased array size from 1 to 10 to demonstrate "Array Slot Reuse" logic [1]
-Laser[] lasers = new Laser[3]; 
+// FIX: Initialized array size to 10 to match design specification for Array Slot Reuse
+Laser[] lasers = new Laser[10]; 
 
 PImage meteorImg;
 
-void setup() { 
-  size(600, 400); // Rule: size() must be the first line [1]
-  
-  // Assets must be in /data folder [1]
+void setup() {
+  size(600, 400); // Rule: size() must be the first line
   meteorImg = loadImage("meteor.png"); 
-  
   ship = new Spaceship(); 
   meteor = new Meteorite(100, 100, meteorImg);
 
-  // Pro-Tip: Initialize the array pool to prevent NullPointerExceptions [1]
   for (int i = 0; i < lasers.length; i++) { 
     lasers[i] = new Laser(); 
   } 
 }
 
-void draw() { 
-  background(51); // Rule: Redraw background to prevent "smearing" [2]
+void draw() {
+  background(51); // Prevent "smearing"
 
   ship.update(); 
   ship.display(); 
   meteor.display();
 
-  // Update and display only active projectiles [2]
   for (int i = 0; i < lasers.length; i++) { 
     if (lasers[i].active) { 
       lasers[i].update(); 
       lasers[i].display();
+      
+      // Collision detection between active lasers and the meteorite target
+      float d = dist(lasers[i].x, lasers[i].y, meteor.x, meteor.y);
+      if (d < meteor.w / 2) {
+        meteor.hitEffect();       // Trigger pixel-level modification
+        lasers[i].active = false; // Deactivate laser to immediately recycle the slot
+      }
     } 
   } 
 }
 
 void mousePressed() { 
-  // Search-and-Fill logic for "Infinite Ammo" - find first inactive slot [2]
+  // Find the first inactive laser slot in the array and recycle it
   for (int i = 0; i < lasers.length; i++) { 
     if (!lasers[i].active) { 
       lasers[i].spawn(ship.x, ship.y, ship.angle); 
