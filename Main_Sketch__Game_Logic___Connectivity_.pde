@@ -1,4 +1,4 @@
-// PIXEL DEFENDER: Final Version 
+// PIXEL DEFENDER: Final Refined Version 
 // Team Name: Digitalis 
 // Topics: 2D Transformations, Array Slot Reuse, Low-Level Image Manipulation
 
@@ -12,10 +12,20 @@ PImage meteorImg;
 void setup() { 
   size(600, 400); // Rule: size() must be the first line
   
-  // Note: Place "meteor.png" inside the "data" subfolder of your sketch directory
+  // Load asset with a fallback check to prevent NullPointerException
   meteorImg = loadImage("meteor.png"); 
+  if (meteorImg == null) {
+    // Fallback: create a placeholder image programmatically if the file is missing
+    meteorImg = createImage(60, 60, ARGB);
+    meteorImg.loadPixels();
+    for (int i = 0; i < meteorImg.pixels.length; i++) {
+      meteorImg.pixels[i] = color(150, 150, 150);
+    }
+    meteorImg.updatePixels();
+  }
+  
   ship = new Spaceship(); 
-  meteor = new Meteorite(100, 100, meteorImg);
+  meteor = new Meteorite(width / 2, 80, meteorImg);
 
   for (int i = 0; i < lasers.length; i++) { 
     lasers[i] = new Laser(); 
@@ -27,6 +37,8 @@ void draw() {
 
   ship.update(); 
   ship.display(); 
+  
+  meteor.update();
   meteor.display();
 
   for (int i = 0; i < lasers.length; i++) { 
