@@ -1,0 +1,26 @@
+class Star {
+  float x, y, size, speed;
+  int starColor;
+  float twinkle;
+
+  Star(int layer) {
+    x = random(width);
+    y = random(height);
+    twinkle = random(1000);
+    if (layer == 0) { size = 1; speed = 0.3; starColor = color(150, 150, 200); } 
+    else if (layer == 1) { size = 2; speed = 1.0; starColor = color(255, 255, 200); } 
+    else { size = 3; speed = 2.5; starColor = color(255); }
+  }
+
+  void update() {
+    y += speed;
+    if (y > height) { y = -10; x = random(width); }
+  }
+
+  void display() {
+    float alpha = 150 + 105 * sin(frameCount * 0.05 + twinkle);
+    fill(starColor, alpha);
+    noStroke();
+    ellipse(x, y, size, size);
+  }
+}
