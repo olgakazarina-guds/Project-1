@@ -1,24 +1,31 @@
-// PIXEL DEFENDER: Final Version 
+// PIXEL DEFENDER: Digitalis Protocol - FINAL POLISHED VERSION
 // Team Name: Digitalis 
-// Topics: 2D Transformations, Array Slot Reuse, Low-Level Image Manipulation
+// Topics: Parallax Starfields, Matrix Stack Balance, Bitwise Pixel Ops, Array Recycling
 
+// --- GLOBAL OBJECTS ---
 Spaceship ship; 
 Cannon cannon;
 ArrayList<Meteorite> meteorites = new ArrayList<Meteorite>();
 BossMeteorite boss = null;
-
 Laser[] lasers = new Laser[10]; 
-PImage meteorImg;
+Star[] stars = new Star[200]; 
 
-int gameState = 0; // 0 = START, 1 = PLAY, 2 = GAME OVER, 3 = VICTORY
+// --- GAME ASSETS & STATE ---
+PImage meteorImg;
+int gameState = 0; // 0=START, 1=PLAY, 2=GAMEOVER, 3=VICTORY
 int score = 0;
 int health = 100;
-int shakeTimer = 0; // Controls screen trembling
+int shakeTimer = 0; 
 
 void setup() { 
-  size(600, 400); // Rule: size() must be the first line
+  size(600, 400); 
   
-  // Load asset with a fallback check to prevent NullPointerException
+  // Initialize Parallax Starfield
+  for (int i = 0; i < stars.length; i++) {
+    stars[i] = new Star(i % 3); 
+  }
+  
+  // Load asset with procedural fallback
   meteorImg = loadImage("meteor.png"); 
   if (meteorImg == null) {
     meteorImg = createImage(60, 60, ARGB);
@@ -37,7 +44,6 @@ void resetGame() {
   health = 100;
   shakeTimer = 0;
   boss = null;
-  
   ship = new Spaceship(); 
   cannon = new Cannon(ship);
   
@@ -46,24 +52,28 @@ void resetGame() {
     meteorites.add(new Meteorite(random(50, width - 50), random(-200, -50), meteorImg));
   }
 
+  // Array Recycling: Initialize laser objects once
   for (int i = 0; i < lasers.length; i++) { 
     lasers[i] = new Laser(); 
   } 
 }
 
 void draw() { 
-  background(30); 
+  background(10); // Deep Space Black
 
-  // Apply Screen Shake / Tremble if active
+  // Apply Screen Shake via 2D Transformation
   pushMatrix();
   if (shakeTimer > 0) {
-    translate(random(-5, 5), random(-5, 5));
+    translate(random(-7, 7), random(-7, 7));
     shakeTimer--;
   }
 
+  // --- STATE MACHINE ---
   if (gameState == 0) {
+    drawStarfield();
     drawStartScreen();
   } else if (gameState == 1) {
+    drawStarfield();
     drawGameLoop();
   } else if (gameState == 2) {
     drawGameOverScreen();
@@ -74,59 +84,15 @@ void draw() {
   popMatrix();
 }
 
-void drawStartScreen() {
-  textAlign(CENTER, CENTER);
-  fill(0, 255, 200);
-  textSize(32);
-  text("PIXEL DEFENDER", width / 2, height / 2 - 40);
-  
-  fill(255);
-  textSize(16);
-  text("Defend the ship! Destroy meteorites & defeat the Boss!\nClick to Aim & Fire.", width / 2, height / 2 + 10);
-  
-  fill(255, 255, 0);
-  textSize(14);
-  text("PRESS ANY KEY TO START", width / 2, height / 2 + 70);
-}
-
-void drawGameOverScreen() {
-  textAlign(CENTER, CENTER);
-  fill(255, 50, 50);
-  textSize(32);
-  text("GAME OVER", width / 2, height / 2 - 40);
-  
-  fill(255);
-  textSize(18);
-  text("Final Score: " + score, width / 2, height / 2 + 10);
-  
-  fill(255, 255, 0);
-  textSize(14);
-  text("PRESS ANY KEY TO RESTART", width / 2, height / 2 + 60);
-}
-
-void drawVictoryScreen() {
-  textAlign(CENTER, CENTER);
-  fill(0, 255, 100);
-  textSize(32);
-  text("VICTORY! BOSS DESTROYED!", width / 2, height / 2 - 40);
-  
-  fill(255);
-  textSize(18);
-  text("Final Score: " + score, width / 2, height / 2 + 10);
-  
-  fill(255, 255, 0);
-  textSize(14);
-  text("PRESS ANY KEY TO PLAY AGAIN", width / 2, height / 2 + 60);
-}
+// --- CORE GAMEPLAY LOOP ---
 
 void drawGameLoop() {
   ship.update(); 
   ship.display(); 
-  
   cannon.update();
   cannon.display();
 
-  // Lasers update
+  // 1. Lasers Update (Recycling Logic)
   for (int i = 0; i < lasers.length; i++) { 
     if (lasers[i].active) { 
       lasers[i].update(); 
@@ -134,106 +100,148 @@ void drawGameLoop() {
     } 
   } 
 
-  // Check Boss Spawn Condition (At 100 points)
-  if (score >= 100 && boss == null) {
-    boss = new BossMeteorite(width / 2, -100, meteorImg);
+  // 2. Boss Logic (Void Harbinger)
+  if (score >= 150 && boss == null) {
+    boss = new BossMeteorite(width / 2, -150, meteorImg);
   }
 
-  // Boss Logic
   if (boss != null) {
     boss.update();
     boss.display();
     
-    // Laser collisions with Boss
     for (int i = 0; i < lasers.length; i++) {
       if (lasers[i].active) {
         float d = dist(lasers[i].x, lasers[i].y, boss.x, boss.y);
-        if (d < boss.w / 2) {
+        if (d < boss.w / 1.8) { // Optimized collision radius
           boss.hitEffect();
+          shakeTimer = 4; // Visual impact feedback
           lasers[i].active = false;
-          
           if (boss.isDestroyed()) {
-            score += 100;
-            gameState = 3; // VICTORY!
-            break;
+            score += 1000;
+            gameState = 3; // Victory!
           }
         }
       }
     }
-
-    if (boss.y > height) {
-      health = 0;
-      shakeTimer = 20;
-      gameState = 2; // Game Over
-    }
+    if (boss.y > height) { health = 0; gameState = 2; }
   }
 
-  // Regular Meteorites Logic
+  // 3. Regular Meteorite Logic
   for (int j = meteorites.size() - 1; j >= 0; j--) {
     Meteorite m = meteorites.get(j);
     m.update();
     m.display();
 
     for (int i = 0; i < lasers.length; i++) {
-      if (lasers[i].active) {
-        float d = dist(lasers[i].x, lasers[i].y, m.x, m.y);
-        if (d < m.w / 2) {
-          m.hitEffect();
-          lasers[i].active = false;
-          
-          if (m.isDestroyed()) {
-            score += 10;
-            meteorites.remove(j);
-            meteorites.add(new Meteorite(random(50, width - 50), random(-150, -50), meteorImg));
-            break;
-          }
+      if (lasers[i].active && dist(lasers[i].x, lasers[i].y, m.x, m.y) < m.w / 2) {
+        m.hitEffect(); // Triggers Bitwise damage and Red Flash
+        lasers[i].active = false;
+        if (m.isDestroyed()) {
+          score += 10;
+          meteorites.remove(j);
+          meteorites.add(new Meteorite(random(50, width-50), random(-150, -50), meteorImg));
+          break;
         }
       }
     }
 
-    // Impact / Missed meteorite
     if (m.y > height) {
       health -= 20;
-      shakeTimer = 10; // Trigger ship trembling shake!
+      shakeTimer = 20; // HEAVY shake on ship damage
       meteorites.remove(j);
-      meteorites.add(new Meteorite(random(50, width - 50), random(-150, -50), meteorImg));
-      
-      if (health <= 0) {
-        gameState = 2; 
-      }
+      meteorites.add(new Meteorite(random(50, width-50), random(-150, -50), meteorImg));
+      if (health <= 0) gameState = 2; 
     }
   }
 
   drawHUD();
 }
 
-void drawHUD() {
-  fill(255);
-  textSize(16);
-  textAlign(LEFT, TOP);
-  text("Score: " + score, 20, 20);
+// --- UI & SCREEN RENDERING ---
 
-  // Ship Health Bar
-  stroke(255);
-  noFill();
-  rect(width - 120, 20, 100, 15);
-  fill(health > 30 ? color(0, 255, 0) : color(255, 0, 0));
-  noStroke();
-  rect(width - 120, 20, map(health, 0, 100, 0, 100), 15);
-  
-  // Boss Health Bar (if active)
-  if (boss != null) {
-    fill(255, 50, 50);
-    textAlign(CENTER, TOP);
-    text("BOSS HEALTH", width / 2, 10);
-    stroke(255);
-    noFill();
-    rect(width / 2 - 100, 30, 200, 15);
-    fill(255, 0, 0);
-    noStroke();
-    rect(width / 2 - 100, 30, map(boss.bossHealth, 0, 15, 0, 200), 15);
+void drawStarfield() {
+  for (Star s : stars) {
+    s.update();
+    s.display();
   }
 }
+
+void drawHUD() {
+  fill(255);
+  textSize(14);
+  textAlign(LEFT, TOP);
+  text("SECTOR SCORE: " + score, 20, 20);
+
+  // Digitalis HUD Style (Cyan/Orange)
+  stroke(0, 168, 255);
+  noFill();
+  rect(width - 125, 20, 105, 15, 3);
+  fill(health > 30 ? color(0, 168, 255) : color(255, 50, 50));
+  noStroke();
+  rect(width - 123, 22, map(health, 0, 100, 0, 101), 11);
+  
+  if (boss != null) {
+    fill(255, 0, 0);
+    textAlign(CENTER, TOP);
+    textSize(12);
+    text("VOID HARBINGER INTEGRITY", width / 2, 10);
+    stroke(255, 0, 0, 150);
+    noFill();
+    rect(width / 2 - 100, 25, 200, 10, 2);
+    fill(200, 0, 0);
+    noStroke();
+    rect(width / 2 - 100, 25, map(boss.bossHealth, 0, 25, 0, 200), 10);
+  }
+}
+
+void drawStartScreen() {
+  textAlign(CENTER, CENTER);
+  fill(0, 168, 255);
+  textSize(48);
+  text("PIXEL DEFENDER", width / 2, height / 2 - 60);
+  
+  fill(200);
+  textSize(15);
+  text("The void is cold, but your lasers are hotter.", width / 2, height / 2 - 20);
+  
+  fill(100);
+  textSize(12);
+  text("Team Digitalis | Interceptor v2.0 | Protocol: Active", width / 2, height / 2 + 10);
+  
+  float pulse = 150 + 105 * sin(frameCount * 0.1);
+  fill(255, 140, 0, pulse);
+  textSize(18);
+  text("PRESS ANY KEY TO ENGAGE", width / 2, height / 2 + 65);
+}
+
+void drawGameOverScreen() {
+  background(30, 0, 0);
+  textAlign(CENTER, CENTER);
+  fill(255, 50, 50);
+  textSize(40);
+  text("SYSTEM FAILURE", width / 2, height / 2 - 40);
+  fill(255);
+  text("Interceptor Lost in Astra-Sector.\nFinal Score: " + score, width / 2, height / 2 + 30);
+  fill(255, 255, 0);
+  textSize(16);
+  text("PRESS ANY KEY TO REBOOT", width / 2, height / 2 + 100);
+}
+
+void drawVictoryScreen() {
+  background(0, 20, 40);
+  drawStarfield();
+  textAlign(CENTER, CENTER);
+  fill(0, 255, 150);
+  textSize(40);
+  text("MISSION ACCOMPLISHED", width / 2, height / 2 - 40);
+  fill(255);
+  text("Goliath-Class Core-Eater Neutralized.\nFinal Score: " + score, width / 2, height / 2 + 30);
+  fill(0, 168, 255);
+  textSize(16);
+  text("PRESS ANY KEY TO RETURN TO BASE", width / 2, height / 2 + 100);
+}
+
+// --- INPUT HANDLING ---
 
 void mousePressed() { 
   if (gameState == 1) {
@@ -247,9 +255,7 @@ void mousePressed() {
 }
 
 void keyPressed() {
-  if (gameState == 0) {
-    gameState = 1;
-  } else if (gameState == 2 || gameState == 3) {
+  if (gameState == 0 || gameState == 2 || gameState == 3) {
     resetGame();
     gameState = 1;
   }

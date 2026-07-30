@@ -1,60 +1,64 @@
 class BossMeteorite extends Entity { 
-  PImage sprite;
-  float speedY = 0.3;
-  int bossHealth = 20;
-  float rotation = 0;
+  PImage bossImg;
+  float speedY = 0.2;
+  int bossHealth = 25;
+  float pulse = 0;
 
-  BossMeteorite(float x, float y, PImage img) { 
-    super(x, y, 130, 130);
-    this.sprite = img.get(); 
+  BossMeteorite(float x, float y, PImage fallbackImg) { 
+    super(x, y, 160, 140);
+    // Attempt to load a specific boss image
+    this.bossImg = loadImage("boss_ship.png");
+    // If you haven't added the file yet, it uses the fallback meteorite image
+    if (this.bossImg == null) this.bossImg = fallbackImg; 
   }
 
   void update() {
     y += speedY;
-    rotation += 0.02;
-    // Stage 3 Enrage: Moves faster when low health
-    if (bossHealth < 5) speedY = 0.8;
+    pulse += 0.05;
+    // Slight side-to-side hovering
+    x += sin(frameCount * 0.02) * 1.5;
   }
 
   void hitEffect() { 
     bossHealth--;
-    sprite.loadPixels();
-    for (int i = 0; i < sprite.pixels.length; i++) {
-      int p = sprite.pixels[i];
-      int a = (p >> 24) & 0xFF;
-      if (a > 0) {
-        // Shift to Molten Red (Bitwise)
-        int r = min(255, ((p >> 16) & 0xFF) + 30);
-        int g = max(0, ((p >> 8) & 0xFF) - 20);
-        int b = max(0, (p & 0xFF) - 20);
-        sprite.pixels[i] = (a << 24) | (r << 16) | (g << 8) | b;
-      }
-    }
-    sprite.updatePixels();
+    // Visual damage: brief red tint
+  }
+
+  boolean isDestroyed() {
+    return bossHealth <= 0;
   }
 
   void display() { 
     pushMatrix();
     translate(x, y);
-    
-    // Core Glow
-    if (bossHealth < 10) {
-      fill(255, 0, 0, 100 + 100 * sin(frameCount * 0.2));
-      ellipse(0, 0, w, w);
-    }
 
-    rotate(rotation);
-    image(sprite, -w/2, -h/2, w, h); 
+    // --- 1. Defensive Shield Aura ---
+    noFill();
+    strokeWeight(3);
+    stroke(0, 255, 255, 50 + sin(pulse) * 50);
+    ellipse(0, 0, w + 20, h + 20);
     
-    // Stage 1 & 2: Rotating Obsidian Plates
-    if (bossHealth > 10) {
-      fill(30);
-      stroke(200, 0, 0);
-      for (int i = 0; i < 4; i++) {
-        rotate(HALF_PI);
-        rect(w/2 - 10, -20, 15, 40);
-      }
-    }
+    // --- 2. The Boss Body ---
+    // We apply a red tint based on health
+    tint(255, map(bossHealth, 0, 25, 50, 255), map(bossHealth, 0, 25, 50, 255));
+    image(bossImg, -w/2, -h/2, w, h);
+    noTint(); // Reset tint for other drawings
+
+    // --- 3. Glow Core (Indicates health stage) ---
+    float coreSize = map(bossHealth, 0, 25, 10, 50);
+    fill(255, 0, 0, 150 + sin(pulse * 2) * 100);
+    noStroke();
+    ellipse(0, 0, coreSize, coreSize);
+    
+    // --- 4. Mechanical Details (Rotating Rings) ---
+    noFill();
+    stroke(100, 255, 100, 150);
+    strokeWeight(2);
+    pushMatrix();
+    rotate(frameCount * 0.05);
+    rect(-w/2 - 10, -h/2 - 10, w + 20, h + 20, 10);
+    popMatrix();
+
     popMatrix();
   }
 }
