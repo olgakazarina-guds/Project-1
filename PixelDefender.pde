@@ -154,13 +154,40 @@ void drawStarfield() { for (Star s : stars) { s.update(); s.display(); } }
 
 void drawHUD() {
   if (storyFont != null) textFont(storyFont);
-  fill(255); textAlign(LEFT, TOP);
+  
+  // --- PLAYER HUD (Top Left and Top Right) ---
+  textAlign(LEFT, TOP);
+  fill(255);
   text("SCORE: " + score, 20, 20);
-  noFill(); stroke(0, 168, 255); rect(width - 125, 20, 105, 15, 3);
+  
+  // Ship Health Bar
+  noFill(); 
+  stroke(0, 168, 255); 
+  rect(width - 125, 20, 105, 15, 3);
   fill(health > 30 ? color(0, 168, 255) : color(255, 50, 50));
+  noStroke();
   rect(width - 123, 22, map(health, 0, 100, 0, 101), 11);
+  
+  // --- BOSS HUD (Appears only when Boss is active) ---
+  if (boss != null) {
+    textAlign(CENTER, TOP);
+    fill(255, 0, 0);
+    textSize(14);
+    text("VOID HARBINGER INTEGRITY", width / 2, 45); 
+    
+    // Bar Background (Dark Red)
+    stroke(255, 0, 0);
+    fill(50, 0, 0); 
+    rect(width / 2 - 100, 65, 200, 12, 5); 
+    
+    // Bar Fill (Bright Red)
+    fill(255, 0, 0);
+    noStroke();
+    // Formula: Uses current boss health (0-25) to scale the width (0-200 pixels)
+    float barWidth = map(boss.bossHealth, 0, 25, 0, 200);
+    rect(width / 2 - 100, 65, barWidth, 12, 5);
+  }
 }
-
 void drawStartScreen() {
   textAlign(CENTER, CENTER);
   if (titleFont != null) textFont(titleFont);
