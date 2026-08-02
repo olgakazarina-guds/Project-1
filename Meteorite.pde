@@ -9,14 +9,14 @@ class Meteorite extends Entity {
     this.damaged = img.get(); 
     this.speedY = random(1.0, 2.5);
     
-    // TOPIC: IMAGE MANIPULATION - Accessing raw pixels for hit-effect
+    // TOPIC: IMAGE MANIPULATION - Using low-level bitwise operations on raw pixels
     damaged.loadPixels();
     for (int i = 0; i < damaged.pixels.length; i++) {
       int p = damaged.pixels[i];
-      // BITWISE: Extract alpha channel (transparency)
+      // BITWISE FORMULA: Extract Alpha (A) from the 32-bit integer color
       int a = (p >> 24) & 0xFF; 
       if (a > 0) {
-        // BITWISE: Set pixel to Red with original alpha
+        // Force pixel color to Red while preserving the original transparency
         damaged.pixels[i] = (a << 24) | (255 << 16) | (50 << 8) | 50;
       }
     }
@@ -28,6 +28,7 @@ class Meteorite extends Entity {
   boolean isDestroyed() { return hitCount >= 3; }
 
   void display() { 
+    // Conditional logic to show either original or damaged image based on flash timer
     PImage toShow = (flashTimer > 0) ? damaged : original;
     image(toShow, x - w/2, y - h/2, w, h); 
   } 

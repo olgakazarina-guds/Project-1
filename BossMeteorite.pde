@@ -11,9 +11,9 @@ class BossMeteorite extends Entity {
 
   void update() {
     y += speedY; pulse += 0.05;
-    // FORMULA: sin() creates a side-to-side hovering motion
+    // FORMULA: sin() creates a side-to-side floating motion for the boss
     x += sin(frameCount * 0.02) * 1.5; 
-    if (bossHealth < 10) speedY = 0.5; // Final stage speed boost
+    if (bossHealth < 10) speedY = 0.5; // Difficulty increases at low health
   }
 
   void hitEffect() { bossHealth--; }
@@ -22,14 +22,14 @@ class BossMeteorite extends Entity {
   void display() { 
     pushMatrix();
     translate(x, y);
-    // Shield Pulse
+    // Shield visual using sin() for a pulsing animation
     noFill(); stroke(0, 255, 255, 50 + sin(pulse) * 50); strokeWeight(3);
     ellipse(0, 0, w + 20, h + 20);
     
-    // IMAGE MANIPULATION: tint() changes the color of the whole image based on health
+    // TOPIC: IMAGE MANIPULATION - Using tint() to shift the image color as health drops
     tint(255, map(bossHealth, 0, 25, 100, 255), map(bossHealth, 0, 25, 100, 255));
     image(img, -w/2, -h/2, w, h);
-    noTint();
+    noTint(); // Safety: reset tint so other graphics are not affected
     popMatrix();
   }
 }
