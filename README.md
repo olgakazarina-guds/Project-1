@@ -64,7 +64,7 @@ Developed by the sole developer of **Team Digitalis**.
 ---
 
 ## 📜 Asset Attribution & Legal Disclaimer
-The visual sprites and audio effects used in this project were sourced from public repositories and search engines.
+The visual sprites and audio effects used in this project were sourced from open-source game asset repositories—including Kenney.nl, OpenGameArt.org, Itch.io, Freesound.org, and Bfxr.net—as well as public search engines.
 Purpose: This project is strictly for educational and non-commercial use as part of a university curriculum.
-Ownership: I do not claim ownership of the external assets integrated into this project. All rights belong to their respective creators.
+Ownership: I do not claim ownership of the external assets integrated into this project. All rights belong to their respective creators and the artists from the mentioned platforms.
 Copyright: If you are the owner of an asset used here and wish for it to be removed or cited differently, please open an Issue.
