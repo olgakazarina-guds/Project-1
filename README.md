@@ -60,3 +60,11 @@ Developed by the sole developer of **Team Digitalis**.
 
 ---
 *Built with Processing, Bitwise Logic, and Spatial Audio.*
+
+---
+
+## 📜 Asset Attribution & Legal Disclaimer
+The visual sprites and audio effects used in this project were sourced from public repositories and search engines.
+Purpose: This project is strictly for educational and non-commercial use as part of a university curriculum.
+Ownership: I do not claim ownership of the external assets integrated into this project. All rights belong to their respective creators.
+Copyright: If you are the owner of an asset used here and wish for it to be removed or cited differently, please open an Issue.
