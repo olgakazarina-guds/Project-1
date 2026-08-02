@@ -34,16 +34,17 @@ This game demonstrates mastery of core programming topics through the following 
 ---
 
 ## 🛠️ Installation & Requirements
-1. **Software:** Install [Processing 4.x](https://processing.org/).
+1. **Software:** Download and install [Processing 4.x](https://processing.org/download).
 2. **Library:** 
-   - Open Processing. 
-   - Go to `Sketch > Import Library > Manage Libraries`.
+   - Open Processing.
+   - Go to **Sketch > Import Library > Manage Libraries...**
    - Search for **"Sound"** and install **"Sound | The Processing Foundation"**.
-3. **Execution:** 
-   - Clone this repository.
-   - Open `PixelDefender.pde`.
-   - Ensure the `/data` folder contains all `.wav`, `.ogg`, and `.png` assets.
-   - Press **Run**.
+3. **Execution:**
+   - Clone this repository or download the ZIP file.
+   - Open the file **`PixelDefender.pde`**.
+   - **Note:** If Processing displays a dialog box saying the file needs to be inside a folder named "PixelDefender," click **OK**.
+   - The project is pre-configured; all assets (.wav, .png) are already located in the `/data` folder.
+   - Press the **Run** (Play) button to engage the protocol.
 
 ---
 
@@ -72,4 +73,4 @@ The visual sprites and audio effects used in this project were sourced from open
 **Legal Notices:**
 *   **Purpose:** This project is strictly for educational and non-commercial use as part of a university curriculum.
 *   **Ownership:** I do not claim ownership of the external assets integrated into this project. All rights belong to their respective creators and artists.
-*   **Copyright:** If you are the owner of an asset used here and wish for it to be removed or cited differently, please open an Issue.
+*   **Copyright:** If you are the owner of an asset used here and w
