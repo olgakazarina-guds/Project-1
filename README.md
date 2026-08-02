@@ -9,7 +9,7 @@ This project was developed for **Coding Camp I: Fundamentals at the German Unive
 ---
 
 ## 🚀 Key Technical Features
-This game demonstrates mastery of three core programming topics:
+This game demonstrates mastery of core programming topics through the following implementations:
 
 1. **2D Transformations & Matrix Stack:** 
    - Uses `pushMatrix()`, `popMatrix()`, and `rotate()` to isolate the ship’s hull from its targeting turret.
@@ -17,7 +17,7 @@ This game demonstrates mastery of three core programming topics:
 2. **Object Pooling & Array Recycling:** 
    - Instead of dynamic object instantiation, the game uses a fixed-size `Laser[10]` array. Inactive slots are recycled to minimize heap overhead and prevent garbage collection stutters.
 3. **Low-Level Image Manipulation:** 
-   - Uses direct `pixels[]` access and **bitwise operations** (`(p >> 24) & 0xFF`) to mathematically generate red-tinted damage frames for meteorites, avoiding the need for extra static assets.
+   - Uses direct `pixels[]` access and **bitwise operations** (`(p >> 24) & 0xFF`) to mathematically generate red-tinted damage frames for meteorites, creating a dynamic "heat damage" effect.
 4. **Parallax Void Engine:** 
    - A multi-layered background system where star layers move at independent speeds to simulate 3D depth in a 2D environment.
 5. **Robustness & Error Handling:** 
@@ -42,29 +42,12 @@ This game demonstrates mastery of three core programming topics:
 3. **Execution:** 
    - Clone this repository.
    - Open `PixelDefender.pde`.
-   - Ensure the `/data` folder contains all `.wav` and `.png` assets.
+   - Ensure the `/data` folder contains all `.wav`, `.ogg`, and `.png` assets.
    - Press **Run**.
 
 ---
 
 ## 📝 Iterative Balancing (Post-Mortem Notes)
 During the final polish phase, several "Pivot" decisions were made to improve the user experience:
-* **Gameplay Pacing:** The Boss spawn threshold was moved from 100 to 150 points to allow for a better difficulty curve.
-* **Combat Rhythm:** Meteorite health was adjusted to 3 hits (down from 5) to create a snappier arcade feel.
-* **Math Precision:** Collision detection was reverted from squared distance math to the standard `dist()` function to ensure pixel-perfect accuracy for varying boss hitboxes.
-
----
-
-## 👥 Development Team
-Developed by the sole developer of **Team Digitalis**.
-
----
-*Built with Processing, Bitwise Logic, and Spatial Audio.*
-
----
-
-## 📜 Asset Attribution & Legal Disclaimer
-The visual sprites and audio effects used in this project were sourced from open-source game asset repositories—including Kenney.nl, OpenGameArt.org, Itch.io, Freesound.org, and Bfxr.net—as well as public search engines.
-Purpose: This project is strictly for educational and non-commercial use as part of a university curriculum.
-Ownership: I do not claim ownership of the external assets integrated into this project. All rights belong to their respective creators and the artists from the mentioned platforms.
-Copyright: If you are the owner of an asset used here and wish for it to be removed or cited differently, please open an Issue.
+* **Gameplay Pacing:** The Boss spawn threshold was moved from 100 to 150 points to allow for a more satisfying difficulty curve.
+* **Combat Rhythm:** Meteorite health was adjusted to 3 hits (d
