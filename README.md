@@ -50,4 +50,26 @@ This game demonstrates mastery of core programming topics through the following 
 ## 📝 Iterative Balancing (Post-Mortem Notes)
 During the final polish phase, several "Pivot" decisions were made to improve the user experience:
 * **Gameplay Pacing:** The Boss spawn threshold was moved from 100 to 150 points to allow for a more satisfying difficulty curve.
-* **Combat Rhythm:** Meteorite health was adjusted to 3 hits (d
+* **Combat Rhythm:** Meteorite health was adjusted to 3 hits (down from 5) to create a snappier arcade feel.
+* **Math Precision:** Collision detection was reverted from squared distance math back to the standard `dist()` function to ensure pixel-perfect accuracy for varying boss hitboxes.
+
+---
+
+## 👥 Development Team
+Developed by the sole developer of **Team Digitalis**.
+
+---
+*Built with Processing, Bitwise Logic, and Spatial Audio.*
+
+---
+
+## 📜 Asset Attribution & Legal Disclaimer
+The visual sprites and audio effects used in this project were sourced from open-source game asset repositories and public search engines.
+
+*   **Graphics:** [Kenney.nl](https://kenney.nl), [OpenGameArt.org](https://opengameart.org), and [Itch.io](https://itch.io).
+*   **Audio:** [Freesound.org](https://freesound.org) and [Bfxr.net](https://www.bfxr.net).
+
+**Legal Notices:**
+*   **Purpose:** This project is strictly for educational and non-commercial use as part of a university curriculum.
+*   **Ownership:** I do not claim ownership of the external assets integrated into this project. All rights belong to their respective creators and artists.
+*   **Copyright:** If you are the owner of an asset used here and wish for it to be removed or cited differently, please open an Issue.
